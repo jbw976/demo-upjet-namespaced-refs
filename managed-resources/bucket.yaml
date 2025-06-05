@@ -1,0 +1,10 @@
+apiVersion: s3.aws.m.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  generateName: crossplane-bucket-
+  namespace: ns-ref-test
+  labels:
+    demo.crossplane.io/scenario: namespaced-refs-bucket
+spec:
+  forProvider:
+    region: us-west-1

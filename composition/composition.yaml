@@ -1,0 +1,92 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+ name: privatebuckets.demo.crossplane.io
+spec:
+  compositeTypeRef:
+    apiVersion: demo.crossplane.io/v1alpha1
+    kind: PrivateBucket
+  mode: Pipeline
+  pipeline:
+  - step: render-with-kcl
+    functionRef:
+      name: function-kcl
+    input:
+      apiVersion: krm.kcl.dev/v1beta1
+      kind: KCLInput
+      metadata:
+        name: resource
+      spec:
+        target: Resources
+        source: |
+          # Get the XR spec fields which are our user input
+          bucketName = option("params")?.oxr?.metadata?.name or "default-bucket"
+          providerConfigName = option("params")?.oxr?.spec?.providerConfigName or "default"
+          region = option("params")?.oxr?.spec.region or "eu-central-1"
+
+          items = [
+            {
+                apiVersion = "s3.aws.m.upbound.io/v1beta1"
+                kind = "Bucket"
+                metadata = {
+                  annotations: {
+                    "krm.kcl.dev/composition-resource-name" = "bucket"
+                  }
+                  labels = {
+                    "demo.crossplane.io/scenario" = "{}".format(bucketName)
+                  }
+                }
+                spec.forProvider = {
+                    region = region
+                }
+                spec.providerConfigRef.name = providerConfigName
+            }
+
+            {
+              apiVersion = "s3.aws.m.upbound.io/v1beta1"
+              kind = "BucketACL"
+              metadata.name = "{}-acl".format(bucketName)
+              spec.forProvider = {
+                acl = "private"
+                bucketSelector.matchLabels = {
+                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
+                }
+                region = region
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+
+            {
+              apiVersion = "s3.aws.m.upbound.io/v1beta1"
+              kind = "BucketOwnershipControls"
+              metadata.name = "{}-ownership-controls".format(bucketName)
+              spec.forProvider = {
+                rule.objectOwnership = "BucketOwnerPreferred"
+                bucketSelector.matchLabels = {
+                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
+                }
+                region = region
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+
+            {
+              apiVersion = "s3.aws.m.upbound.io/v1beta1"
+              kind = "BucketPublicAccessBlock"
+              metadata.name = "{}-public-access-block".format(bucketName)
+              spec.forProvider = {
+                blockPublicAcls: False
+                blockPublicPolicy = False
+                ignorePublicAcls = False
+                restrictPublicBuckets = False
+                bucketSelector.matchLabels = {
+                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
+                }
+                region = region
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+          ]
+  - step: ready
+    functionRef:
+      name: function-auto-ready

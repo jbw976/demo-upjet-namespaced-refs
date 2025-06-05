@@ -1,0 +1,12 @@
+apiVersion: s3.aws.m.upbound.io/v1beta1
+kind: BucketACL
+metadata:
+ name: crossplane-bucket-acl
+ namespace: ns-ref-test
+spec:
+ forProvider:
+  acl: private
+  bucketSelector:
+   matchLabels:
+    demo.crossplane.io/scenario: namespaced-refs-bucket
+  region: us-west-1

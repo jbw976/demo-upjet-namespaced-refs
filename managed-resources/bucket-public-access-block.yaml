@@ -1,0 +1,15 @@
+apiVersion: s3.aws.m.upbound.io/v1beta1
+kind: BucketPublicAccessBlock
+metadata:
+  name: crossplane-bucket-public-access-block
+  namespace: ns-ref-test
+spec:
+  forProvider:
+    blockPublicAcls: false
+    blockPublicPolicy: false
+    ignorePublicAcls: false
+    restrictPublicBuckets: false
+    bucketSelector:
+      matchLabels:
+        demo.crossplane.io/scenario: namespaced-refs-bucket
+    region: us-west-1

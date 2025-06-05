@@ -1,0 +1,7 @@
+apiVersion: demo.crossplane.io/v1alpha1
+kind: PrivateBucket
+metadata:
+  name: private-bucket
+  namespace: ns-ref-test
+spec:
+  region: us-west-1
