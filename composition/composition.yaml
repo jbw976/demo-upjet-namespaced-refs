@@ -48,9 +48,7 @@ spec:
               metadata.name = "{}-acl".format(bucketName)
               spec.forProvider = {
                 acl = "private"
-                bucketSelector.matchLabels = {
-                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
-                }
+                bucketSelector.matchControllerRef = True
                 region = region
               }
               spec.providerConfigRef.name = providerConfigName
@@ -62,9 +60,7 @@ spec:
               metadata.name = "{}-ownership-controls".format(bucketName)
               spec.forProvider = {
                 rule.objectOwnership = "BucketOwnerPreferred"
-                bucketSelector.matchLabels = {
-                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
-                }
+                bucketSelector.matchControllerRef = True
                 region = region
               }
               spec.providerConfigRef.name = providerConfigName
@@ -79,9 +75,7 @@ spec:
                 blockPublicPolicy = False
                 ignorePublicAcls = False
                 restrictPublicBuckets = False
-                bucketSelector.matchLabels = {
-                  "demo.crossplane.io/scenario" = "{}".format(bucketName)
-                }
+                bucketSelector.matchControllerRef = True
                 region = region
               }
               spec.providerConfigRef.name = providerConfigName
