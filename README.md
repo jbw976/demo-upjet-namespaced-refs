@@ -11,21 +11,21 @@ helm install crossplane --namespace crossplane-system --create-namespace crosspl
 kubectl create namespace ns-ref-test
 ```
 
-## Install and Configure v2 Compatible Provider and Functions
+### Install and Configure v2 Compatible Provider and Functions
 ```
 kubectl apply -f provider.yaml
 kubectl apply -f functions.yaml
 kubectl get pkg
 ```
 
-## Configure AWS Credentials
+### Configure AWS Credentials
 ```
 AWS_PROFILE=default && echo -e "[default]\naws_access_key_id = $(aws configure get aws_access_key_id --profile $AWS_PROFILE)\naws_secret_access_key = $(aws configure get aws_secret_access_key --profile $AWS_PROFILE)" > aws-credentials.txt
 kubectl create secret generic aws-secret -n crossplane-system --from-file=creds=./aws-credentials.txt
 kubectl apply -f providerconfig.yaml
 ```
 
-## Create S3 Bucket directly using namespaced Managed Resources
+## 1. Create S3 Bucket directly using namespaced Managed Resources
 
 This example creates an S3 bucket, along with the necessary configuration to
 create private bucket ACLs. S3 discourages the use of ACLs nowadays, so some
@@ -68,7 +68,7 @@ kubectl -n ns-ref-test get bucketacl.s3.aws.m.upbound.io/crossplane-bucket-acl -
 }
 ```
 
-## Create S3 Bucket using a namespaced XR
+## 2. Create S3 Bucket using a namespaced XR
 
 Now let's create similar namespaced `Bucket` resources using composition, to
 ensure namespaced cross resource references work in that context as well.
@@ -104,7 +104,7 @@ kubectl -n ns-ref-test get bucketacl.s3.aws.m.upbound.io/private-bucket-acl -o j
 }
 ```
 
-## Create EC2 Instance and Networking using Multiple Resolution
+## 3. Create EC2 Instance and Networking using Multiple Resolution
 
 We can also create a namespaced EC2 instance with its required networking, like VPC,
 Subnet, and Security Groups. The security groups will be selected for the EC2
