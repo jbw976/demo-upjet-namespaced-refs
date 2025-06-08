@@ -1,0 +1,31 @@
+apiVersion: apiextensions.crossplane.io/v2alpha1
+kind: CompositeResourceDefinition
+metadata:
+  name: computeinstances.demo.crossplane.io
+spec:
+  scope: Namespaced
+  group: demo.crossplane.io
+  names:
+    kind: ComputeInstance
+    plural: computeinstances
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+     openAPIV3Schema:
+      type: object
+      properties:
+        spec:
+          type: object
+          properties:
+            securityGroupCount:
+              type: integer
+              description: The number of security groups to create
+              default: 2
+            providerConfigName:
+              type: string
+              description: ProviderConfig to use to provision resources
+              default: default
+
+

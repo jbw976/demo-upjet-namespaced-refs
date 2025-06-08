@@ -14,7 +14,7 @@ kubectl create namespace ns-ref-test
 ## Install and Configure v2 Compatible Provider and Functions
 ```
 kubectl apply -f provider.yaml
-kubectl apply -f composition/functions.yaml
+kubectl apply -f functions.yaml
 kubectl get pkg
 ```
 
@@ -104,6 +104,48 @@ kubectl -n ns-ref-test get bucketacl.s3.aws.m.upbound.io/private-bucket-acl -o j
 }
 ```
 
+## Create EC2 Instance and Networking using Multiple Resolution
+
+We can also create a namespaced EC2 instance with its required networking, like VPC,
+Subnet, and Security Groups. The security groups will be selected for the EC2
+instance using multiple reference resolution, i.e. one reference selector can
+select multiple objects.
+
+Create the `CompositeResourceDefinition` (XRD) and `Composition`:
+```
+kubectl apply -f multi-refs/xrd.yaml
+kubectl apply -f multi-refs/composition.yaml
+```
+
+Create a namespaced `ComputeInstance`:
+```
+kubectl apply -f multi-refs/xr.yaml
+```
+
+The namespaced `ComputeInstance` resources should become ready and available:
+```
+kubectl tree -n ns-ref-test computeinstance.demo.crossplane.io/cool-compute
+
+NAMESPACE    NAME                               READY  REASON     AGE
+ns-ref-test  ComputeInstance/cool-compute       True   Available  4m21s
+ns-ref-test  ├─Instance/cool-compute-instance   True   Available  4m21s
+ns-ref-test  ├─SecurityGroup/cool-compute-sg-0  True   Available  4m21s
+ns-ref-test  ├─SecurityGroup/cool-compute-sg-1  True   Available  4m21s
+ns-ref-test  ├─SecurityGroup/cool-compute-sg-2  True   Available  4m21s
+ns-ref-test  ├─Subnet/cool-compute-subnet       True   Available  4m21s
+ns-ref-test  └─VPC/cool-compute-vpc             True   Available  4m21s
+```
+
+The namespaced reference using multiple reference resolution should be resolved:
+```
+kubectl -n ns-ref-test get instance.ec2.aws.m.upbound.io/cool-compute-instance -o json | jq .spec.forProvider.vpcSecurityGroupIds
+[
+  "sg-065d79d3f6fa6a851",
+  "sg-06835b7e42db26c26",
+  "sg-08e47b350f0c006c5"
+]
+```
+
 ## Clean-up
 
 Clean up all the resources, if there are any hangs, make sure the bucket is
@@ -117,6 +159,7 @@ kubectl delete -f managed-resources/bucket-acl.yaml
 
 ```
 kubectl delete -f composition/xr.yaml
+kubectl delete -f multi-refs/xr.yaml
 ```
 
 Ensure no more resources are left behind:

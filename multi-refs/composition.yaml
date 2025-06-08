@@ -1,0 +1,89 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+ name: computeinstances.demo.crossplane.io
+spec:
+  compositeTypeRef:
+    apiVersion: demo.crossplane.io/v1alpha1
+    kind: ComputeInstance
+  mode: Pipeline
+  pipeline:
+  - step: render-with-kcl
+    functionRef:
+      name: function-kcl
+    input:
+      apiVersion: krm.kcl.dev/v1beta1
+      kind: KCLInput
+      metadata:
+        name: resource
+      spec:
+        target: Resources
+        source: |
+          # Get the XR spec fields which are our user input
+          name = option("params")?.oxr?.metadata?.name or "default-compute"
+          securityGroupCount = option("params")?.oxr?.spec?.securityGroupCount or 2
+          providerConfigName = option("params")?.oxr?.spec?.providerConfigName or "default"
+
+          _items = [
+            {
+              apiVersion = "ec2.aws.m.upbound.io/v1beta1"
+              kind = "VPC"
+              metadata = {
+                name = "{}-vpc".format(name)
+              }
+              spec.forProvider = {
+                region = "us-west-2"
+                cidrBlock = "192.168.0.0/16"
+                enableDnsHostnames = True
+                enableDnsSupport = True
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+
+            {
+              apiVersion = "ec2.aws.m.upbound.io/v1beta1"
+              kind = "Subnet"
+              metadata = {
+                name: "{}-subnet".format(name)
+              }
+              spec.forProvider = {
+                  region = "us-west-2"
+                  cidrBlock = "192.168.1.0/24"
+                  vpcIdSelector.matchControllerRef = True
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+
+            {
+              apiVersion = "ec2.aws.m.upbound.io/v1beta1"
+              kind = "Instance"
+              metadata.name = "{}-instance".format(name)
+              spec.forProvider = {
+                  region = "us-west-2"
+                  instanceType = "t3.micro"
+                  ami = "ami-0cf2b4e024cdb6960"
+                  subnetIdSelector.matchControllerRef = True
+                  vpcSecurityGroupIdSelector.matchControllerRef = True
+              }
+              spec.providerConfigRef.name = providerConfigName
+            }
+          ]
+
+          securityGroups = [{
+            apiVersion = "ec2.aws.m.upbound.io/v1beta1"
+            kind = "SecurityGroup"
+            metadata = {
+              name = "{}-sg-{}".format(name, i)
+            }
+            spec.forProvider = {
+                name = "{}-sg-{}".format(name, i)
+                region = "us-west-2"
+                vpcIdSelector.matchControllerRef = True
+            }
+            spec.providerConfigRef.name = providerConfigName
+          } for i in range(securityGroupCount)]
+
+          items = _items + securityGroups
+  - step: ready
+    functionRef:
+      name: function-auto-ready

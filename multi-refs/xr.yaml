@@ -1,0 +1,7 @@
+apiVersion: demo.crossplane.io/v1alpha1
+kind: ComputeInstance
+metadata:
+  name: cool-compute
+  namespace: ns-ref-test
+spec:
+  securityGroupCount: 3
