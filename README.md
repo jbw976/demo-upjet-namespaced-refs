@@ -146,6 +146,43 @@ kubectl -n ns-ref-test get instance.ec2.aws.m.upbound.io/cool-compute-instance -
 ]
 ```
 
+## 4. Create Legacy Cluster Scoped Resources
+
+Create the legacy cluster scoped `Bucket` and all of its resources:
+```
+kubectl create -f legacy/bucket.yaml
+kubectl apply -f legacy/bucket-ownership-controls.yaml
+kubectl apply -f legacy/bucket-public-access-block.yaml
+kubectl apply -f legacy/bucket-acl.yaml
+```
+
+Ensure that the legacy Bucket and its related resources get created, ready, and
+synced (note they have no namespaced, they are cluster scoped):
+```
+kubectl get managed -A
+
+NAMESPACE   NAME                                                       SYNCED   READY   EXTERNAL-NAME                     AGE
+            bucketacl.s3.aws.upbound.io/crossplane-bucket-acl-legacy   True     True    crossplane-bucket-cqcfz,private   2m
+
+NAMESPACE   NAME                                                                                    SYNCED   READY   EXTERNAL-NAME             AGE
+            bucketownershipcontrols.s3.aws.upbound.io/crossplane-bucket-ownership-controls-legacy   True     True    crossplane-bucket-cqcfz   78s
+
+NAMESPACE   NAME                                               SYNCED   READY   EXTERNAL-NAME             AGE
+            bucket.s3.aws.upbound.io/crossplane-bucket-cqcfz   True     True    crossplane-bucket-cqcfz   2m1s
+
+NAMESPACE   NAME                                                                                     SYNCED   READY   EXTERNAL-NAME             AGE
+            bucketpublicaccessblock.s3.aws.upbound.io/crossplane-bucket-public-access-block-legacy   True     True    crossplane-bucket-cqcfz   2m1s
+```
+
+We can also see that these legacy resources, like `BucketACL`, resolved
+their references successfully and now directly refer to their bucket:
+```
+kubectl get bucketacl.s3.aws.upbound.io/crossplane-bucket-acl-legacy -o json | jq .spec.forProvider.bucketRef
+{
+  "name": "crossplane-bucket-cqcfz"
+}
+```
+
 ## Clean-up
 
 Clean up all the resources, if there are any hangs, make sure the bucket is
@@ -155,6 +192,13 @@ kubectl delete -f managed-resources/bucket-ownership-controls.yaml
 kubectl delete -f managed-resources/bucket-public-access-block.yaml
 kubectl delete -n ns-ref-test bucket.s3.aws.m.upbound.io -l demo.crossplane.io/scenario=namespaced-refs-bucket
 kubectl delete -f managed-resources/bucket-acl.yaml
+```
+
+```
+kubectl delete -f legacy/bucket-ownership-controls.yaml
+kubectl delete -f legacy/bucket-public-access-block.yaml
+kubectl delete bucket.s3.aws.upbound.io -l demo.crossplane.io/scenario=legacy-refs-bucket
+kubectl delete -f legacy/bucket-acl.yaml
 ```
 
 ```

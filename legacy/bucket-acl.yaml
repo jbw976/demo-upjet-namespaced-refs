@@ -1,0 +1,11 @@
+apiVersion: s3.aws.upbound.io/v1beta2
+kind: BucketACL
+metadata:
+ name: crossplane-bucket-acl-legacy
+spec:
+ forProvider:
+  acl: private
+  bucketSelector:
+   matchLabels:
+    demo.crossplane.io/scenario: legacy-refs-bucket
+  region: us-west-1

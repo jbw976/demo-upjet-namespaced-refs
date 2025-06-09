@@ -1,0 +1,14 @@
+apiVersion: s3.aws.upbound.io/v1beta1
+kind: BucketPublicAccessBlock
+metadata:
+  name: crossplane-bucket-public-access-block-legacy
+spec:
+  forProvider:
+    blockPublicAcls: false
+    blockPublicPolicy: false
+    ignorePublicAcls: false
+    restrictPublicBuckets: false
+    bucketSelector:
+      matchLabels:
+        demo.crossplane.io/scenario: legacy-refs-bucket
+    region: us-west-1

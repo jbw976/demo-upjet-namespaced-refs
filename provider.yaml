@@ -3,11 +3,11 @@ kind: Provider
 metadata:
   name: provider-aws-s3
 spec:
-  package: index.docker.io/jbw976/provider-aws-s3:v1.21.0-rc.0.75.g6bb03ad15.dirty
+  package: index.docker.io/jbw976/provider-aws-s3:v1.21.0-rc.0.76.ga3e391c90.dirty
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-aws-ec2
 spec:
-  package: index.docker.io/jbw976/provider-aws-ec2:v1.21.0-rc.0.75.g6bb03ad15.dirty
+  package: index.docker.io/jbw976/provider-aws-ec2:v1.21.0-rc.0.76.ga3e391c90.dirty
