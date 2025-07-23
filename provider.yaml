@@ -1,13 +1,6 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-family-aws
-spec:
-  package: index.docker.io/erhancag/provider-aws-s3:v2.0.0-dev.d03c26d8a
----
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
   name: provider-aws-s3
 spec:
   package: index.docker.io/erhancag/provider-aws-s3:v2.0.0-dev.d03c26d8a
