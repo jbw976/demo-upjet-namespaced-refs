@@ -8,3 +8,6 @@ metadata:
 spec:
   forProvider:
     region: us-west-1
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: default
