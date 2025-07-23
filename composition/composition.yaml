@@ -39,7 +39,10 @@ spec:
                   spec.forProvider = {
                       region = region
                   }
-                  spec.providerConfigRef.name = providerConfigName
+                  spec.providerConfigRef = {
+                      kind = "ClusterProviderConfig"
+                      name = providerConfigName
+                  }
               }
               {
                   apiVersion = "s3.aws.m.upbound.io/v1beta1"
