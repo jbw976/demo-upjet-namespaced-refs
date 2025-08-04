@@ -1,4 +1,4 @@
-apiVersion: apiextensions.crossplane.io/v2alpha1
+apiVersion: apiextensions.crossplane.io/v2
 kind: CompositeResourceDefinition
 metadata:
   name: privatebuckets.demo.crossplane.io
@@ -9,23 +9,21 @@ spec:
     kind: PrivateBucket
     plural: privatebuckets
   versions:
-  - name: v1alpha1
-    served: true
-    referenceable: true
-    schema:
-     openAPIV3Schema:
-      type: object
-      properties:
-        spec:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
           type: object
           properties:
-            providerConfigName:
-              type: string
-              description: ProviderConfig to use to provision resources
-              default: default
-            region:
-              type: string
-              description: Region where the resources will be created
-              default: us-west-2
-
-
+            spec:
+              type: object
+              properties:
+                providerConfigName:
+                  type: string
+                  description: ProviderConfig to use to provision resources
+                  default: default
+                region:
+                  type: string
+                  description: Region where the resources will be created
+                  default: us-west-2

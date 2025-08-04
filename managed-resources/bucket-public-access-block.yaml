@@ -13,3 +13,6 @@ spec:
       matchLabels:
         demo.crossplane.io/scenario: namespaced-refs-bucket
     region: us-west-1
+  providerConfigRef:
+    kind: ClusterProviderConfig
+    name: default
