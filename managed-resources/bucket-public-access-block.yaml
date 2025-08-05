@@ -14,5 +14,5 @@ spec:
         demo.crossplane.io/scenario: namespaced-refs-bucket
     region: us-west-1
   providerConfigRef:
-    kind: ClusterProviderConfig
+    kind: ProviderConfig
     name: default

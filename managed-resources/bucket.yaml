@@ -9,5 +9,5 @@ spec:
   forProvider:
     region: us-west-1
   providerConfigRef:
-    kind: ClusterProviderConfig
+    kind: ProviderConfig
     name: default
