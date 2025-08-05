@@ -7,7 +7,7 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      namespace: crossplane-system
+      namespace: ns-ref-test
       name: aws-secret
       key: creds
 ---
