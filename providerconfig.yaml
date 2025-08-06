@@ -1,3 +1,19 @@
+---
+# legacy ProviderConfig
+apiVersion: aws.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+  namespace: ns-ref-test
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: aws-secret
+      key: creds
+---
+# namespaced ProviderConfig
 apiVersion: aws.m.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
