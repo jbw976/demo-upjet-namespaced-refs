@@ -1,0 +1,22 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: aws-resources
+spec:
+  activate:
+  # Required Resources
+  - clusterproviderconfigs.aws.m.upbound.io
+  - providerconfigs.aws.m.upbound.io
+  - providerconfigs.aws.upbound.io
+  - providerconfigusages.aws.m.upbound.io
+  - providerconfigusages.aws.upbound.io
+  # Namespaced Resources
+  - buckets.s3.aws.m.upbound.io 
+  - bucketpublicaccessblocks.s3.aws.m.upbound.io
+  - bucketownershipcontrols.s3.aws.m.upbound.io 
+  - bucketacls.s3.aws.m.upbound.io
+  # Cluster Scoped
+  - buckets.s3.aws.upbound.io 
+  - bucketpublicaccessblocks.s3.aws.upbound.io
+  - bucketownershipcontrols.s3.aws.upbound.io 
+  - bucketacls.s3.aws.upbound.io

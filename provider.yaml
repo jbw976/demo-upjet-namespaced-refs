@@ -3,11 +3,11 @@ kind: Provider
 metadata:
   name: provider-aws-s3
 spec:
-  package: xpkg.upbound.io/upbound-release-candidates/provider-aws-s3:v2.0.0-devrc.1
+  package: xpkg.upbound.io/crossplane-contrib/provider-aws-s3:v2.0.0
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-aws-ec2
 spec:
-  package: xpkg.upbound.io/upbound-release-candidates/provider-aws-ec2:v2.0.0-devrc.1
+  package: xpkg.upbound.io/crossplane-contrib/provider-aws-ec2:v2.0.0
