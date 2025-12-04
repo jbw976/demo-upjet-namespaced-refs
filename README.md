@@ -22,6 +22,7 @@ kubectl get pkg
 ```
 AWS_PROFILE=default && echo -e "[default]\naws_access_key_id = $(aws configure get aws_access_key_id --profile $AWS_PROFILE)\naws_secret_access_key = $(aws configure get aws_secret_access_key --profile $AWS_PROFILE)" > aws-credentials.txt
 kubectl create secret generic aws-secret -n crossplane-system --from-file=creds=./aws-credentials.txt
+kubectl create secret generic aws-secret -n ns-ref-test --from-file=creds=./aws-credentials.txt
 kubectl apply -f providerconfig.yaml
 ```
 
